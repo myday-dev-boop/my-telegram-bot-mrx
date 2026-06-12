@@ -326,18 +326,19 @@ async def on_message(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
                 InlineKeyboardButton("🔗 Приложения",   callback_data="apps_link"),
             ]])
 
-        try:
-            await update.message.reply_text(
-                answer,
-                parse_mode="Markdown",
-                reply_markup=reply_markup
-            )
-        except Exception:
-            # если разметка сломалась — отправляем без форматирования
-            await update.message.reply_text(
-                answer,
-                reply_markup=reply_markup
-            )
+        # Telegram не принимает сообщения длиннее 4096 символов — режем на части
+        chunks = [answer[i:i+4000] for i in range(0, len(answer), 4000)]
+        for idx, chunk in enumerate(chunks):
+            # кнопки показываем только под последней частью
+            markup = reply_markup if idx == len(chunks) - 1 else None
+            try:
+                await update.message.reply_text(
+                    chunk,
+                    parse_mode="Markdown",
+                    reply_markup=markup
+                )
+            except Exception:
+                await update.message.reply_text(chunk, reply_markup=markup)
 
     except Exception as e:
         logger.error(f"Ошибка у {uid}: {e}")
