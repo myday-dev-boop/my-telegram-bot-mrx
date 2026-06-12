@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 # ── Gemini ────────────────────────────────────────────────────
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-gemini = genai.GenerativeModel("gemini-2.0-flash")
+gemini = genai.GenerativeModel("gemini-2.5-flash")
 
 # ── история диалогов ─────────────────────────────────────────
 histories: dict[int, list] = {}
